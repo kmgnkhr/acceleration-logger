@@ -1,6 +1,7 @@
 #include <BluetoothSerial.h>
 #include <M5StickC.h>
 #include "imu6886.h"
+#include "console.h"
 
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
 #  error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
@@ -9,16 +10,16 @@
 namespace {
 
 IMU6886 imu;
-BluetoothSerial SerialBT;
+BluetoothSerial serialBT;
+Console console(&imu, &serialBT);
+// Console console(&imu, &Serial);
 
 }  // namespace
 
 void setup() {
   M5.begin();
-  SerialBT.begin("M5Accel");
-
-  imu.begin();
-  imu.calibrate();
+  serialBT.begin("M5Accel");
+  console.begin();
 }
 
 void loop() {
@@ -29,14 +30,7 @@ void loop() {
     return;
   }
 
-  float x, y, z;
-  imu.get(&x, &y, &z);
-
-  auto line = String(::millis(), DEC) + "," +
-              String(x) + "," + String(y) + "," + String(z);
-
-  Serial.println(line);
-  SerialBT.println(line);
-
-  ::delay(100);
+  if (console.loop()) {
+    return;
+  }
 }
