@@ -6,6 +6,7 @@ IMU6886::IMU6886() : offset_() {
 
 void IMU6886::begin() {
   M5.IMU.Init();
+  ::pinMode(10, OUTPUT);
 }
 
 void IMU6886::calibrate() {

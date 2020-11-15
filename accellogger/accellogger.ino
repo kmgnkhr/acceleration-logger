@@ -17,8 +17,6 @@ void setup() {
   M5.begin();
   SerialBT.begin("M5Accel");
 
-  ::pinMode(10, OUTPUT);
-
   imu.begin();
   imu.calibrate();
 }
