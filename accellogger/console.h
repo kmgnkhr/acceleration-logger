@@ -15,6 +15,8 @@ class Console  {
   void begin();
   bool loop();
 
+  void print_log();
+
  private:
   bool command();
 };

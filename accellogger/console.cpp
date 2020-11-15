@@ -5,6 +5,40 @@ Console::Console(IMU6886* imu, Stream* stream)
 : imu_(imu), stream_(stream), show_(false) {
 }
 
+namespace {
+
+const int QUEUE_LENGTH = 1;
+hw_timer_t* timer = nullptr;
+QueueHandle_t xQueue;
+TaskHandle_t taskHandle;
+
+void IRAM_ATTR onTimer() {
+  int8_t data;
+  xQueueSendToFrontFromISR(xQueue, &data, 0);
+}
+
+void task_main(void* pvParameters) {
+  auto console = static_cast<Console*>(pvParameters);
+  while (true) {
+    int8_t data;
+    xQueueReceive(xQueue, &data, portMAX_DELAY);
+    console->print_log();
+  }
+}
+
+void kickStartLoggerTask(void* pvParameters) {
+  xQueue = xQueueCreate(QUEUE_LENGTH, sizeof(int8_t));
+  xTaskCreateUniversal(task_main, "logger", 8192,
+                       pvParameters, 5, &taskHandle, APP_CPU_NUM);
+
+  timer = timerBegin(0, getApbFrequency() / 1000000, true);
+  timerAttachInterrupt(timer, &onTimer, true);
+  timerAlarmWrite(timer, 5 * 1000, true);
+  timerAlarmEnable(timer);
+}
+
+}  // namespace
+
 void Console::begin() {
   show_ = false;
 
@@ -12,21 +46,12 @@ void Console::begin() {
     imu_->begin();
     imu_->calibrate();
   }
+
+  kickStartLoggerTask(this);
 }
 
 bool Console::loop() {
-  if (command()) {
-    return true;
-  }
-  if (!show_) {
-    return false;
-  }
-  float x, y, z;
-  imu_->get(&x, &y, &z);
-  auto line = String(::millis(), DEC) + "," +
-              String(x) + "," + String(y) + "," + String(z);
-  stream_->println(line);
-  return false;
+  return command();
 }
 
 bool Console::command() {
@@ -49,4 +74,15 @@ bool Console::command() {
       break;
   }
   return false;
+}
+
+void Console::print_log() {
+  if (!show_) {
+    return;
+  }
+  float x, y, z;
+  imu_->get(&x, &y, &z);
+  auto line = String(::millis(), DEC) + "," +
+              String(x) + "," + String(y) + "," + String(z);
+  stream_->println(line);
 }
