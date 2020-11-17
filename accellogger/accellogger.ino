@@ -1,7 +1,7 @@
 #include <BluetoothSerial.h>
 #include <M5StickC.h>
 #include "imu6886.h"
-#include "console.h"
+#include "logger.h"
 
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
 #  error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
@@ -11,26 +11,45 @@ namespace {
 
 IMU6886 imu;
 BluetoothSerial serialBT;
-Console console(&imu, &serialBT);
-// Console console(&imu, &Serial);
+Logger logger;
+
+void command(Stream* stream) {
+  if (stream == nullptr || stream->available() == 0) return;
+
+  const auto c = stream->read();
+  switch (::tolower(c)) {
+    case 'c':
+      imu.calibrate();
+      break;
+    case 'b':
+      stream->println("begin");
+      logger.Start(&imu, 1000);
+      stream->print("end (");
+      stream->print(logger.LoggedPeriod());
+      stream->println("us)");
+      break;
+    case 's':
+      logger.Flush(stream);
+      break;
+    default:
+      break;
+  }
+}
+
+Stream* streams[2] = { &Serial, &serialBT };
 
 }  // namespace
 
 void setup() {
-  M5.begin();
+  M5.begin(false, false, true);
   serialBT.begin("M5Accel");
-  console.begin();
+
+  imu.begin();
+  imu.calibrate();
 }
 
 void loop() {
-  M5.update();
-
-  if (M5.BtnA.wasPressed()) {
-    imu.calibrate();
-    return;
-  }
-
-  if (console.loop()) {
-    return;
+  for (auto& stream : streams) {
+    command(stream);
   }
 }
