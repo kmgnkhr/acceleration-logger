@@ -27,6 +27,7 @@ int read_argument(Stream* stream) {
 
 void start(Stream* stream) {
   auto i = read_argument(stream);
+  ::digitalWrite(10, LOW);
   stream->print("begin (");
   stream->print(i);
   stream->println("us)");
@@ -34,6 +35,7 @@ void start(Stream* stream) {
   stream->print("end (");
   stream->print(logger.LoggedPeriod());
   stream->println("us)");
+  ::digitalWrite(10, HIGH);
 }
 
 void command(Stream* stream) {
@@ -49,9 +51,7 @@ void command(Stream* stream) {
       ::digitalWrite(10, HIGH);
       break;
     case 'b':
-      ::digitalWrite(10, LOW);
       start(stream);
-      ::digitalWrite(10, HIGH);
       break;
     case 's':
       read_argument(stream);
