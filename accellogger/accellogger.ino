@@ -1,5 +1,4 @@
 #include <BluetoothSerial.h>
-#include <M5StickC.h>
 #include "imu6886.h"
 #include "logger.h"
 
@@ -45,9 +44,11 @@ Stream* streams[2] = { &Serial, &serialBT };
 }  // namespace
 
 void setup() {
-  M5.begin(false, false, true);
-  serialBT.begin("M5Accel");
   ::pinMode(10, OUTPUT);
+  serialBT.begin("M5Accel");
+  Serial.begin(115200);
+  Serial.flush();
+  ::delay(50);
 
   imu.begin();
   imu.calibrate();
