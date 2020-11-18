@@ -20,6 +20,7 @@ bool isCancellationRequest(Stream* stream) {
 void Logger::Start(IMU6886* imu, uint32_t interval_us, Stream* stream) {
   index_ = 0;
   auto last = ::micros();
+  const auto start = last;
   for (auto& log : buffer_) {
     auto now = ::micros();
     while ((now - last) < interval_us) {
@@ -31,7 +32,7 @@ void Logger::Start(IMU6886* imu, uint32_t interval_us, Stream* stream) {
 
     float x, y, z;
     imu->get(&x, &y, &z);
-    log.micros = now;
+    log.micros = now - start;
     log.x = static_cast<int16_t>(x * 100.F);
     log.y = static_cast<int16_t>(y * 100.F);
     log.z = static_cast<int16_t>(z * 100.F);
