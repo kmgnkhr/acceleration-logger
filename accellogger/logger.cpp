@@ -9,6 +9,7 @@ uint32_t Logger::LoggedPeriod() const {
 }
 
 void Logger::Start(IMU6886* imu, uint32_t interval_us) {
+  index_ = 0;
   auto last = ::micros();
   for (auto& log : buffer_) {
     auto now = ::micros();
@@ -24,8 +25,8 @@ void Logger::Start(IMU6886* imu, uint32_t interval_us) {
     log.z = static_cast<int16_t>(z * 100.F);
 
     last = now;
+    ++index_;
   }
-  index_ = static_cast<int>(sizeof(buffer_)/sizeof(LOG));
 }
 
 void Logger::Flush(Stream* stream) {
