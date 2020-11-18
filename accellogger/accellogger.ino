@@ -24,11 +24,13 @@ void command(Stream* stream) {
       ::digitalWrite(10, HIGH);
       break;
     case 'b':
+      ::digitalWrite(10, LOW);
       stream->println("begin");
       logger.Start(&imu, 1000, stream);
       stream->print("end (");
       stream->print(logger.LoggedPeriod());
       stream->println("us)");
+      ::digitalWrite(10, HIGH);
       break;
     case 's':
       logger.Flush(stream);
