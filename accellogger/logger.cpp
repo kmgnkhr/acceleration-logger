@@ -8,12 +8,24 @@ uint32_t Logger::LoggedPeriod() const {
   return (index_ > 0) ? (buffer_[index_ - 1].micros - buffer_[0].micros) : 0;
 }
 
-void Logger::Start(IMU6886* imu, uint32_t interval_us) {
+namespace {
+bool isCancellationRequest(Stream* stream) {
+  if (stream != nullptr && stream->available()) {
+    if (stream->read() == 'e') return true;
+  }
+  return false;
+}
+}  // namespace
+
+void Logger::Start(IMU6886* imu, uint32_t interval_us, Stream* stream) {
   index_ = 0;
   auto last = ::micros();
   for (auto& log : buffer_) {
     auto now = ::micros();
     while ((now - last) < interval_us) {
+      if (isCancellationRequest(stream)) {
+        return;
+      }
       now = ::micros();
     }
 

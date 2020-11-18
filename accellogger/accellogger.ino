@@ -25,7 +25,7 @@ void command(Stream* stream) {
       break;
     case 'b':
       stream->println("begin");
-      logger.Start(&imu, 1000);
+      logger.Start(&imu, 1000, stream);
       stream->print("end (");
       stream->print(logger.LoggedPeriod());
       stream->println("us)");
