@@ -6,6 +6,7 @@ IMU6886::IMU6886() : offset_() {
 
 void IMU6886::begin() {
   M5.IMU.Init();
+  Wire1.begin(21, 22, 10000000UL);
 }
 
 void IMU6886::calibrate() {
