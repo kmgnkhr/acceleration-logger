@@ -6,11 +6,9 @@ IMU6886::IMU6886() : offset_() {
 
 void IMU6886::begin() {
   M5.IMU.Init();
-  ::pinMode(10, OUTPUT);
 }
 
 void IMU6886::calibrate() {
-  ::digitalWrite(10, LOW);
   float sum[3] = {0};
 
   const auto counter = 500;
@@ -27,7 +25,6 @@ void IMU6886::calibrate() {
     o = sum[&o - &offset_[0]] / counter;
   }
   offset_[2] -= 1.F;
-  ::digitalWrite(10, HIGH);
 }
 
 void IMU6886::get(float* x, float* y, float* z) {

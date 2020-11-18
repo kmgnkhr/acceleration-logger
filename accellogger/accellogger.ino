@@ -19,7 +19,9 @@ void command(Stream* stream) {
   const auto c = stream->read();
   switch (::tolower(c)) {
     case 'c':
+      ::digitalWrite(10, LOW);
       imu.calibrate();
+      ::digitalWrite(10, HIGH);
       break;
     case 'b':
       stream->println("begin");
@@ -43,9 +45,11 @@ Stream* streams[2] = { &Serial, &serialBT };
 void setup() {
   M5.begin(false, false, true);
   serialBT.begin("M5Accel");
+  ::pinMode(10, OUTPUT);
 
   imu.begin();
   imu.calibrate();
+  ::digitalWrite(10, HIGH);
 }
 
 void loop() {
