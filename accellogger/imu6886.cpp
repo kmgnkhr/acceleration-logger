@@ -1,12 +1,15 @@
 #include "imu6886.h"
 #include <M5StickC.h>
 
+#undef MPU6886
+
 IMU6886::IMU6886() : offset_() {
 }
 
 void IMU6886::begin() {
   M5.IMU.Init();
   Wire1.setClock(10000000UL);
+  M5.Mpu6886.SetAccelFsr(MPU6886::AFS_4G);
 }
 
 void IMU6886::calibrate() {
