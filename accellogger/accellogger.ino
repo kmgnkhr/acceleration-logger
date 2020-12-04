@@ -33,7 +33,10 @@ void start(Stream* stream) {
   stream->println("us)");
   logger.Start(&imu, i, stream);
   stream->print("end (");
-  stream->print(logger.LoggedPeriod());
+  stream->print(logger.LoggedPeriod() / 1000);
+  stream->println("ms)");
+  stream->print("rate (");
+  stream->print(logger.CalcRate());
   stream->println("us)");
   ::digitalWrite(10, HIGH);
 }
