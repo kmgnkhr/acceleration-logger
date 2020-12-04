@@ -18,6 +18,7 @@ class Logger {
   uint32_t LoggedPeriod() const;
   void Start(IMU6886* imu, uint32_t interval_us, Stream* stream);
   void Flush(Stream* stream);
+  uint32_t CalcRate() const;
 
  private:
   Logger(const Logger&);

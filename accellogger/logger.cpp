@@ -53,3 +53,7 @@ void Logger::Flush(Stream* stream) {
   }
   index_ = 0;
 }
+
+uint32_t Logger::CalcRate() const {
+  return (index_ <= 0) ? 0 : buffer_[index_ - 1].micros / index_;
+}
