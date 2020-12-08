@@ -17,7 +17,7 @@ class Logger {
   Logger();
 
   void Start(IMU6886* imu, uint32_t interval_us, Stream* stream);
-  void Flush(Stream* stream);
+  void Show(Stream* stream);
   int SamplingCount() const;
 
  private:

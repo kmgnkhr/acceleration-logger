@@ -56,7 +56,7 @@ void command(Stream* stream) {
       break;
     case 's':
       read_argument(stream);
-      logger.Flush(stream);
+      logger.Show(stream);
       break;
     default:
       break;

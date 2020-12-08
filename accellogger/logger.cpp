@@ -48,7 +48,7 @@ void Logger::Start(IMU6886* imu, uint32_t interval_us, Stream* stream) {
   }
 }
 
-void Logger::Flush(Stream* stream) {
+void Logger::Show(Stream* stream) {
   auto offset = 0;
   auto last = 0;
   for (auto i = 0; i < index_; ++i) {
@@ -61,7 +61,6 @@ void Logger::Flush(Stream* stream) {
                 String(log.z / 10000.F, 4);
     stream->println(line);
   }
-  index_ = 0;
 }
 
 int Logger::SamplingCount() const {
