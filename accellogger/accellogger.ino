@@ -33,11 +33,9 @@ void start(Stream* stream) {
   stream->println("us)");
   logger.Start(&imu, i, stream);
   stream->print("end (");
-  stream->print(logger.LoggedPeriod() / 1000);
-  stream->println("ms)");
-  stream->print("rate (");
-  stream->print(logger.CalcRate());
-  stream->println("us)");
+  auto term = static_cast<float>(logger.SamplingCount() * i) / 1000.f;
+  stream->print(term, 1);
+  stream->println(" ms)");
   ::digitalWrite(10, HIGH);
 }
 

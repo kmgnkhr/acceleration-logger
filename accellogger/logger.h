@@ -7,7 +7,7 @@
 
 class Logger {
   struct LOG {
-    uint32_t micros;
+    uint16_t micros;
     int16_t x, y, z;
   } buffer_[7000];
   int index_;
@@ -15,10 +15,9 @@ class Logger {
  public:
   Logger();
 
-  uint32_t LoggedPeriod() const;
   void Start(IMU6886* imu, uint32_t interval_us, Stream* stream);
   void Flush(Stream* stream);
-  uint32_t CalcRate() const;
+  int SamplingCount() const;
 
  private:
   Logger(const Logger&);
