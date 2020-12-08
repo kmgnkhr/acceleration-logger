@@ -49,7 +49,7 @@ void Logger::Start(IMU6886* imu, uint32_t interval_us, Stream* stream) {
   }
 }
 
-void Logger::Show(Stream* stream) {
+void Logger::Show(Stream* stream) const {
   auto offset = 0;
   auto last = 0;
   for (auto i = 0; i < index_; ++i) {
@@ -64,7 +64,7 @@ void Logger::Show(Stream* stream) {
   }
 }
 
-void Logger::Validate(Stream* stream) {
+void Logger::Validate(Stream* stream) const {
   auto offset = 0;
   auto last = 0;
   for (auto i = 0; i < index_; ++i) {
