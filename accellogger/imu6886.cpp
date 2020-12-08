@@ -6,10 +6,24 @@
 IMU6886::IMU6886() : offset_() {
 }
 
+namespace {
+void WriteTwoWire(uint8_t driver_Addr, uint8_t start_Addr,
+                  const uint8_t *write_Buffer, TwoWire* wire) {
+  wire->beginTransmission(driver_Addr);
+  wire->write(start_Addr);
+  wire->write(*write_Buffer);
+  wire->endTransmission();
+}
+}  // namespace
+
 void IMU6886::begin() {
   M5.IMU.Init();
   Wire1.setClock(10000000UL);
   M5.Mpu6886.SetAccelFsr(MPU6886::AFS_4G);
+
+  unsigned char regdata = 0x00;
+  WriteTwoWire(MPU6886_ADDRESS, MPU6886_SMPLRT_DIV, &regdata, &Wire1);
+  ::delay(1);
 }
 
 void IMU6886::calibrate() {
