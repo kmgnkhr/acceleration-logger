@@ -63,6 +63,25 @@ void Logger::Show(Stream* stream) {
   }
 }
 
+void Logger::Validate(Stream* stream) {
+  auto offset = 0;
+  auto last = 0;
+  for (auto i = 0; i < index_; ++i) {
+    const auto& log = buffer_[i];
+    if ((log.micros - last) < 0) offset += kMask;
+    last = log.micros;
+    auto micros = static_cast<int32_t>(log.micros + offset);
+    auto diff = micros - i * 1000;
+    if (diff > 5 || diff < -5) {
+      stream->print("diff: ");
+      stream->print(diff);
+      stream->print(" at ");
+      stream->print(micros);
+      stream->println("us");
+    }
+  }
+}
+
 int Logger::SamplingCount() const {
   return (index_ >= 0) ? index_ : 0;
 }

@@ -58,6 +58,10 @@ void command(Stream* stream) {
       read_argument(stream);
       logger.Show(stream);
       break;
+    case 'v':
+      read_argument(stream);
+      logger.Validate(stream);
+      break;
     default:
       break;
   }
