@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "logger.h"
 
-Logger::Logger() : buffer_(), index_(0) {
+Logger::Logger() : buffer_(nullptr), index_(0) {
 }
 
 namespace {
@@ -17,10 +17,17 @@ const uint32_t kMask = 10000;
 }  // namespace
 
 void Logger::Start(IMU6886* imu, uint32_t interval_us, Stream* stream) {
+  if (buffer_ != nullptr) {
+    delete [] buffer_;
+  }
+  const auto count = ::heap_caps_get_largest_free_block(MALLOC_CAP_8BIT)
+                                                             / sizeof(LOG);
+  buffer_ = new LOG[count];
   index_ = 0;
   const auto start = ::micros();
   auto next = start;
-  for (auto& log : buffer_) {
+  for (auto i = 0; i < count; ++i) {
+    auto& log = buffer_[i];
     auto now = ::micros();
     while (now < next) {
       if (isCancellationRequest(stream)) {

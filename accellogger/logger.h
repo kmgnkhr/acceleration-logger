@@ -9,7 +9,8 @@ class Logger {
   struct LOG {
     uint16_t micros;
     int16_t x, y, z;
-  } buffer_[7000];
+  };
+  LOG* buffer_;
   int index_;
 
  public:
