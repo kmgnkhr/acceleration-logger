@@ -12,6 +12,7 @@ class Logger {
   };
   LOG* buffer_;
   int index_;
+  uint32_t interval_us_;
 
  public:
   Logger();
